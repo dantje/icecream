@@ -1906,7 +1906,10 @@ void CompileFileMsg::fill_from_channel(MsgChannel *c)
         *c >> outputFile;
         *c >> dwarfFissionEnabled;
         job->setOutputFile(outputFile);
-        job->setDwarfFissionEnabled(dwarfFissionEnabled);
+        if (dwarfFissionEnabled)
+        {
+            job->setExtraOutputFileEnum(CompileJob::eExFile_dwarfFission);
+        }
     }
 }
 
@@ -2007,7 +2010,15 @@ void CompileResultMsg::fill_from_channel(MsgChannel *c)
         uint32_t dwo = 0;
         *c >> dwo;
         have_dwo_file = dwo;
+        if (have_dwo_file) // cas with old daemon, and we're obviously a new client
+        {
+            extra_files = CompileJob::eExFile_dwarfFission;
+        }
     }
+    if (IS_PROTOCOL_38(c)) {
+        *c >> extra_files;
+    }
+
 }
 
 void CompileResultMsg::send_to_channel(MsgChannel *c) const
@@ -2020,6 +2031,10 @@ void CompileResultMsg::send_to_channel(MsgChannel *c) const
     if (IS_PROTOCOL_35(c)) {
         *c << (uint32_t) have_dwo_file;
     }
+    if (IS_PROTOCOL_38(c)) {
+        *c << extra_files;
+    }
+
 }
 
 void JobBeginMsg::fill_from_channel(MsgChannel *c)

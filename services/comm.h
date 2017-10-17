@@ -563,7 +563,8 @@ public:
         : Msg(M_COMPILE_RESULT)
         , status(0)
         , was_out_of_memory(false)
-        , have_dwo_file(false) {}
+        , have_dwo_file(false)
+        , extra_files(0) {}
 
     virtual void fill_from_channel(MsgChannel *c);
     virtual void send_to_channel(MsgChannel *c) const;
@@ -573,6 +574,7 @@ public:
     std::string err;
     bool was_out_of_memory;
     bool have_dwo_file;
+    uint32_t extra_files;
 };
 
 class JobBeginMsg : public Msg
