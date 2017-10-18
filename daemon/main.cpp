@@ -581,7 +581,7 @@ bool Daemon::setup_listen_fds()
             myaddr.sin_port = htons(daemon_port);
             myaddr.sin_addr.s_addr = INADDR_ANY;
 
-            if (bind(tcp_listen_fd, (struct sockaddr *)&myaddr,
+            if (::bind(tcp_listen_fd, (struct sockaddr *)&myaddr,
                      sizeof(myaddr)) < 0) {
                 log_perror("bind()");
                 sleep(2);
@@ -616,7 +616,7 @@ bool Daemon::setup_listen_fds()
     myaddr.sun_family = AF_UNIX;
 
     bool reset_umask = false;
-    mode_t old_umask = 0;
+    mode_t old_umask = (mode_t)-1U;
 
     if (getenv("ICECC_TEST_SOCKET") == NULL) {
 #ifdef HAVE_LIBCAP_NG
@@ -665,17 +665,17 @@ bool Daemon::setup_listen_fds()
         }
     }
 
-    if (bind(unix_listen_fd, (struct sockaddr*)&myaddr, sizeof(myaddr)) < 0) {
+    if (::bind(unix_listen_fd, (struct sockaddr*)&myaddr, sizeof(myaddr)) < 0) {
         log_perror("bind()");
 
-        if (reset_umask) {
+        if (old_umask != (mode_t)-1U) {
             umask(old_umask);
         }
 
         return false;
     }
 
-    if (reset_umask) {
+    if (old_umask != (mode_t)-1U) {
         umask(old_umask);
     }
 
