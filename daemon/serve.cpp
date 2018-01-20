@@ -176,7 +176,6 @@ int handle_connection(const string &basedir, CompileJob *job,
 
     Msg *msg = 0; // The current read message
     int exit_code = 0;
-    unsigned int job_id = 0;
     string tmp_path, obj_file;
 
     try {

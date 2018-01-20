@@ -615,7 +615,6 @@ bool Daemon::setup_listen_fds()
 
     myaddr.sun_family = AF_UNIX;
 
-    bool reset_umask = false;
     mode_t old_umask = static_cast<mode_t>(-1U);
 
     if (getenv("ICECC_TEST_SOCKET") == NULL) {
@@ -635,7 +634,6 @@ bool Daemon::setup_listen_fds()
                 log_perror("unlink failed") << "\t" << myaddr.sun_path << endl;
             }
             old_umask = umask(0);
-            reset_umask = true;
         } else { // Started by user.
             if( getenv( "HOME" )) {
                 string socket_path = getenv("HOME");
