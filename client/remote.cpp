@@ -754,7 +754,7 @@ static int minimalRemoteVersion( const CompileJob& job)
     }
 
     if (job.extraOutputEnabled()) {
-        version = max(version, 38);
+        version = max(version, 39);
     }
 
     return version;
